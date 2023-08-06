@@ -1,7 +1,8 @@
-
 # Aqui vocês irão colocar seu algoritmo de aprendizado
 import connection as con
 import constants
+import pandas as pd
+from pandas import DataFrame
 
 
 def get_movement(move: int) -> str:
@@ -17,6 +18,7 @@ def get_movement(move: int) -> str:
             'Invalid move value. Only values between 0 and 2 are allowed (inclusive)'
         )
 
+    print('next movement: ', constants.MOVE_MAP[move])
     return constants.MOVE_MAP[move]
 
 
@@ -32,13 +34,36 @@ def get_next_platform(state: str) -> int:
     return (plat << 2) + direction
 
 
-def update_util(curr_direction, curr_platarform, next_direction, next_plataform, reward, const_alfa, const_gama):
-    return matriz[curr_direction][curr_platarform] + const_alfa*(reward + const_gama*matriz[next_direction][next_plataform] - matriz[curr_direction][curr_platarform])
+def load_policy_from_file(file: str) -> DataFrame:
+    """Read csv file with default values"""
+
+    return pd.read_csv(file, header=None, sep=' ')
+
+
+def write_policy_file(df: DataFrame):
+    """write df with updated values as a txt file"""
+    df.to_csv('resultado.txt', header=None, index=None, mode='w', sep=' ')
+
+
+def update_util(
+    curr_direction,
+    curr_platarform,
+    next_direction,
+    next_plataform,
+    reward,
+    const_alfa,
+    const_gama,
+):
+    return matriz[curr_direction][curr_platarform] + const_alfa * (
+        reward
+        + const_gama * matriz[next_direction][next_plataform]
+        - matriz[curr_direction][curr_platarform]
+    )
+
 
 def main():
     const_alfa = 0.9
     const_gama = 0.5
-    end = 0
 
     connect = con.connect(2037)
     state = 1010000
@@ -51,16 +76,23 @@ def main():
         state, reward = con.get_state_reward(connect, act)
 
         next_plataform, next_direction = get_next_act()
-        
 
-        matriz[curr_direction][curr_platarform] = update_util(matriz, curr_direction, curr_platarform, next_direction, next_plataform, reward, const_alfa, const_gama)
+        matriz[curr_direction][curr_platarform] = update_util(
+            matriz,
+            curr_direction,
+            curr_platarform,
+            next_direction,
+            next_plataform,
+            reward,
+            const_alfa,
+            const_gama,
+        )
         curr_direction = next_direction
         curr_platarform = next_plataform
 
         if reward == 300:
-            end = 1
+            pass
 
-        
 
-if __name__=="__main__":
+if __name__ == '__main__':
     main()
