@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "qlearning"
+version = "0.1.0"
+description = ""
+authors = ["Hugo Marques <43884516+hggmarks@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.group.dev.dependencies]
+taskipy = "^1.12.0"
+pytest = "^7.4.0"
+ruff = "^0.0.282"
+blue = "^0.9.1"
+isort = "^5.12.0"
+
+[tool.ruff]
+line-length = 79
+exclude = ['.venv', 'migrations']
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.pytest.ini_options]
+pythonpath = "."
+
+[tool.blue]
+extend-exclude = '(migrations/)'
+
+[tool.taskipy.tasks]
+lint = 'ruff . && blue --check . --diff'
+format = 'blue .  && isort .'
+pre_test = 'task lint'
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

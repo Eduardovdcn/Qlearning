@@ -1,29 +1,31 @@
+import socket
 import threading
 import time
-import socket
 
 
-#Cria a conexao TCP
 def connect(port):
+    """Cria a conexao TCP"""
+
     try:
-        s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        s.connect(('127.0.0.1',port))
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(('127.0.0.1', port))
         print('conexao TCP estabelecida')
         return s
     except:
         print('falhou em fazer o a conexao TCP como cliente')
         return 0
-        #self.terminate()
+        # self.terminate()
     else:
         print('continuando')
 
 
-#Da o estado e a recompensa que o agente recebeu
-def get_state_reward(s , act):
+def get_state_reward(s, act):
+    """Da o estado e a recompensa que o agente recebeu"""
+
     s.send(str(act).encode())
-    data = "" 
-    data_recv = False;
-    while(not data_recv):
+    data = ''
+    data_recv = False
+    while not data_recv:
         data = s.recv(1024).decode()
         try:
             data = eval(data)
@@ -31,7 +33,7 @@ def get_state_reward(s , act):
         except:
             data_recv = False
 
-    #convert the data to decimal int
+    # convert the data to decimal int
     estado = data['estado']
     recompensa = data['recompensa']
 

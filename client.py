@@ -1,14 +1,36 @@
+
+# Aqui vocês irão colocar seu algoritmo de aprendizado
 import connection as con
+import constants
 
-def pos_matrix(state):
-    plataform = int(state[2:7],2)
-    direction = int(state[7:9],2)
-    print(f"plataform: {plataform}")
-    print(f"Direction: {direction}")
-    return ((4 * plataform) + direction)
 
-def define_act():
-    pass
+def get_movement(move: int) -> str:
+    """
+    Returns a string with the movement based on the value of @move parameter
+    0: left
+    1: right
+    2: jump
+    """
+
+    if 0 <= move or move >= 3:
+        raise ValueError(
+            'Invalid move value. Only values between 0 and 2 are allowed (inclusive)'
+        )
+
+    return constants.MOVE_MAP[move]
+
+
+def get_next_platform(state: str) -> int:
+    """return next platform based on the current one"""
+
+    print(f'prevstate: {state}')
+    direction = int(state[7:9], 2)
+    plat = int(state[2:7], 2)
+    print(f'next direction: {direction}')
+    print(f'next state [plat]: {plat}')
+
+    return (plat << 2) + direction
+
 
 def update_util(curr_direction, curr_platarform, next_direction, next_plataform, reward, const_alfa, const_gama):
     return matriz[curr_direction][curr_platarform] + const_alfa*(reward + const_gama*matriz[next_direction][next_plataform] - matriz[curr_direction][curr_platarform])
